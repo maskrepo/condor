@@ -9,10 +9,10 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
-@Path("/kbis")
+@Path("/kbistext")
 @Produces(MediaType.TEXT_PLAIN)
 @ApplicationScoped
-class Kbis @Inject constructor(val cache: ProduitCache) {
+class KbisText @Inject constructor(val cache: ProduitCache) {
 
     @GET
     @Path("/all")
