@@ -12,4 +12,8 @@ interface KbisService {
     @Produces(MediaType.WILDCARD)
     fun getPDFbyNumGestion(@QueryParam("numGestion") nogest :String?) :ByteArray
 
+    @GET
+    @Produces(MediaType.WILDCARD)
+    fun getXMLbyNumGestion(@QueryParam("numGestion") nogest :String?, @QueryParam("format") format:String = "xml") :String
+
 }
