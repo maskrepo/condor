@@ -15,5 +15,5 @@ interface KbisService {
     @GET
     @Produces(MediaType.WILDCARD)
     fun getXMLbyNumGestion(@QueryParam("numGestion") nogest :String?, @QueryParam("format") format:String = "xml") :String
-
+    //Alain rajoute un commentaire bidon BIS
 }

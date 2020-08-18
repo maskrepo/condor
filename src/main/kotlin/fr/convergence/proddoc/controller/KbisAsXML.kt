@@ -30,5 +30,6 @@ class KbisAsXML {
 
         LOG.info("Demande d'un KBIS XML avec le numéro de gestion $numgestion")
         return kbisSrv?.getXMLbyNumGestion(numgestion)
+        // Alain rajoute un commentaire bidon
     }
 }
