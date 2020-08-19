@@ -11,7 +11,19 @@ plugins {
 group = "fr.convergence.proddoc"
 version = "1.0-SNAPSHOT"
 
+// je mets ces 2 variables ici car je n'arrive pas à les mettre ailleurs
+// (dans settings.gradle.kts par exemple)
+val myMavenRepoUser = "myMavenRepo"
+val myMavenRepoPassword ="mask"
+
 repositories {
+    maven {
+        url = uri("https://mymavenrepo.com/repo/OYRB63ZK3HSrWJfc2RIB/")
+        credentials {
+            username = myMavenRepoUser
+            password = myMavenRepoPassword
+        }
+    }
     mavenLocal()
     mavenCentral()
 }
@@ -33,7 +45,7 @@ dependencies {
 
     implementation("fr.convergence.proddoc.libs:MaskCache:1.0.2-SNAPSHOT")
     implementation("fr.convergence.proddoc.libs:MaskModel:1.0.0-SNAPSHOT")
-    implementation("fr.convergence.proddoc.libs:MaskSerdes:1.0-SNAPSHOT")
+    implementation("fr.convergence.proddoc.util:MaskSerdes:1.0-SNAPSHOT")
 
     testImplementation("io.quarkus:quarkus-junit5")
 }
