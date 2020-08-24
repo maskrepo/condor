@@ -3,6 +3,8 @@ package fr.convergence.proddoc.controller
 import fr.convergence.proddoc.services.rest.client.KbisService
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
@@ -26,10 +28,16 @@ class KbisAsXML {
 
     @GET
     @Path("{numgestion}")
-    fun numGestionKbis(@PathParam("numgestion") numgestion :String?) : String? {
+    fun numGestionKbis(@PathParam("numgestion") numgestion: String?): String? {
 
-        LOG.info("Demande d'un KBIS XML avec le numéro de gestion $numgestion")
-        return kbisSrv?.getXMLbyNumGestion(numgestion)
-        // Alain rajoute un commentaire bidon
+        var xmLbyNumGestion : String? = null
+
+        runBlocking {
+            launch {
+                xmLbyNumGestion = kbisSrv?.getXMLbyNumGestion(numgestion)
+            }
+        }
+        return (xmLbyNumGestion)
+        //@TODO retourner une response http je crois ?
     }
 }

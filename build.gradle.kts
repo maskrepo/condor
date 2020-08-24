@@ -8,6 +8,7 @@ plugins {
     id ("jacoco")
 }
 
+
 group = "fr.convergence.proddoc"
 version = "1.0-SNAPSHOT"
 
@@ -42,6 +43,7 @@ dependencies {
     implementation("io.quarkus:quarkus-kafka-streams:$quarkusVersion")
     implementation("io.debezium:debezium-core:1.1.2.Final")
     implementation("org.reflections:reflections:0.9.12")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
     implementation("fr.convergence.proddoc.libs:MaskCache:1.0.2-SNAPSHOT")
     implementation("fr.convergence.proddoc.libs:MaskModel:1.0.0-SNAPSHOT")
