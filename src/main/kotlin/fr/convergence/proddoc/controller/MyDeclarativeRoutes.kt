@@ -5,25 +5,33 @@ import io.quarkus.vertx.web.RoutingExchange;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import javax.enterprise.context.ApplicationScoped;
+import fr.convergence.proddoc.services.rest.client.KbisReactiveService
+import javax.inject.Inject
 
 @ApplicationScoped
 public class MyDeclarativeRoutes {
-    // neither path nor regex is set - match a path derived from the method name
+
+    var kbisSrv: KbisReactiveService? = KbisReactiveService()
 
     @Route(methods = arrayOf(HttpMethod.GET))
     fun hello(rc :RoutingContext) {
         rc.response().end("hello c'est la classe")
     }
 
-  /*  @Route(path = "/world")
-    fun helloWorld():String? {
-        //return ("Hello world!")
-        return (null)
-    }
-*/
     @Route(path = "/greetings", methods = arrayOf(HttpMethod.GET))
     fun greetings(ex :RoutingExchange)
     {
         ex.ok("hello " + ex.getParam("name").orElse("world"))
+    }
+
+    @Route(path = "/kbis", methods = arrayOf(HttpMethod.GET))
+    fun kbis(ex :RoutingExchange)
+    {
+
+        var numgestion = ex.getParam("numgestion").orElse("toto")
+        println("appel de KbisReactiveService.getXMLbyNumGestion $numgestion")
+        var retour = kbisSrv?.getXMLbyNumGestion(numgestion)
+        println("fin appel de KbisReactiveService.getXMLbyNumGestion avec retour = $retour")
+        ex.ok(retour)
     }
 }
