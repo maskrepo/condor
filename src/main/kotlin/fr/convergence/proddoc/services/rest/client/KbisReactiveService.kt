@@ -14,7 +14,7 @@ class KbisReactiveService {
         private val LOG: Logger = LoggerFactory.getLogger(KbisAsXMLReactive::class.java)
     }
 
-    fun getXMLbyNumGestion(nogest: String) {
+    fun getXMLbyNumGestion(nogest: String) : String {
 
         LOG.info("entree dans KbisReactiveService.getXMLbyNumGestion")
         var xml :String = "noKbis"
