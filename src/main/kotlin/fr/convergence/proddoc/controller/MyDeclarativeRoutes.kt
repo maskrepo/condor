@@ -6,6 +6,8 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import javax.enterprise.context.ApplicationScoped;
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @ApplicationScoped
@@ -30,8 +32,12 @@ public class MyDeclarativeRoutes {
 
         var numgestion = ex.getParam("numgestion").orElse("toto")
         println("appel de KbisReactiveService.getXMLbyNumGestion $numgestion")
-        var retour = kbisSrv?.getXMLbyNumGestion(numgestion)
-        println("fin appel de KbisReactiveService.getXMLbyNumGestion avec retour = $retour")
-        ex.ok(retour)
+        runBlocking {
+            launch {
+                var retour = kbisSrv?.getXMLbyNumGestion(numgestion)
+                println("fin appel de KbisReactiveService.getXMLbyNumGestion avec retour = $retour")
+                ex.ok(retour)
+            }
+        }
     }
 }

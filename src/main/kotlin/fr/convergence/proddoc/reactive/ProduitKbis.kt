@@ -22,9 +22,11 @@ public class ProduitKbis(@Inject var cache: ProduitCache) {
         cache.addParameter(produit)
     }
 
-    @Incoming("produit-kbis")
+    @Incoming("kbis")
     fun ecouteKbis(produit: Produit) {
         LOG.info("Réception demande Kbis : $produit");
         //@TODO appeler le kbis avec les bon paramètres
     }
+
+    //@TODO un outgoing sur le meme topic kbisOK ou kbisKO
 }

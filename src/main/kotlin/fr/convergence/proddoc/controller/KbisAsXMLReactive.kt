@@ -1,6 +1,5 @@
 package fr.convergence.proddoc.controller
 
-import fr.convergence.proddoc.libs.model.Kbis
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
 import io.quarkus.vertx.web.Route;
 import io.quarkus.vertx.web.RoutingExchange;
@@ -8,9 +7,7 @@ import io.vertx.core.http.HttpMethod;
 import javax.enterprise.context.ApplicationScoped;
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
-import fr.convergence.proddoc.services.rest.client.KbisService
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 @ApplicationScoped
 class KbisAsXMLReactive {
@@ -25,22 +22,20 @@ class KbisAsXMLReactive {
     fun numGestionKbis(ex :RoutingExchange)  {
 
         val numgestion :String = ex.getParam("numgestion").orElse("empty")
-        LOG.info("Recuperation paramètre numgestion : $numgestion")
-
-        if (!numgestion.equals("empty")) {
-            var xmLbyNumGestion : String? = null
-            runBlocking {
-                launch {
-                    LOG.info("Appel de getXMLbyNumGestion")
-                    xmLbyNumGestion = kbisSrv?.getXMLbyNumGestion(numgestion)
-                    LOG.info("Valeur de XMLbyNumGestion : $xmLbyNumGestion")
+        LOG.info("Recupération paramètre numgestion : $numgestion")
+            if (!numgestion.equals("empty")) {
+                var xmLbyNumGestion: String? = null
+                runBlocking {
+                    launch {
+                        LOG.info("Appel de getXMLbyNumGestion")
+                        xmLbyNumGestion = kbisSrv.getXMLbyNumGestion(numgestion)
+                        LOG.info("Valeur de XMLbyNumGestion : $xmLbyNumGestion")
+                    }
                 }
-            }
-            ex.ok("$xmLbyNumGestion")
-        }
-        else ex.ok("Numero de gestion invalide")
-       /*
+                ex.ok("$xmLbyNumGestion")
+            } else ex.ok("Numero de gestion invalide")
+            /*
         return (xmLbyNumGestion) */
-        //@TODO retourner une response http je crois ?
+            //@TODO retourner une response http je crois ?
     }
 }
