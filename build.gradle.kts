@@ -46,6 +46,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     implementation("io.quarkus:quarkus-vertx-web")
     implementation("io.vertx:vertx-web-client:3.9.2")
+    implementation("org.apache.solr:solr-solrj:8.6.1")
 
     implementation("fr.convergence.proddoc.libs:MaskCache:1.0.2-SNAPSHOT")
     implementation("fr.convergence.proddoc.libs:MaskModel:1.0.0-SNAPSHOT")

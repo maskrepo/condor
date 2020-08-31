@@ -29,7 +29,7 @@ class KbisAsXMLReactive {
                     launch {
                         LOG.info("Appel de getXMLbyNumGestion")
                         xmLbyNumGestion = kbisSrv.getXMLbyNumGestion(numgestion)
-                        LOG.info("Valeur de XMLbyNumGestion : $xmLbyNumGestion")
+                        // LOG.info("Valeur de XMLbyNumGestion : $xmLbyNumGestion")
                     }
                 }
                 ex.ok("$xmLbyNumGestion")
