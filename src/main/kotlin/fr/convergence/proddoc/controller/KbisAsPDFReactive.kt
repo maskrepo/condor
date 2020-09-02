@@ -1,10 +1,10 @@
 package fr.convergence.proddoc.controller
 
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
-import io.quarkus.vertx.web.Route;
-import io.quarkus.vertx.web.RoutingExchange;
-import io.vertx.core.http.HttpMethod;
-import javax.enterprise.context.ApplicationScoped;
+import io.quarkus.vertx.web.Route
+import io.quarkus.vertx.web.RoutingExchange
+import io.vertx.core.http.HttpMethod
+import javax.enterprise.context.ApplicationScoped
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import kotlinx.coroutines.*
@@ -18,12 +18,12 @@ class KbisAsPDFReactive {
 
     var kbisSrv = KbisReactiveService()
 
-    @Route(path = "/pdfnumgestionreactive", methods = arrayOf(HttpMethod.GET))
+    @Route(path = "/pdfnumgestionreactive", methods = [HttpMethod.GET])
     fun numGestionKbis(ex :RoutingExchange)  {
 
         val numgestion :String = ex.getParam("numgestion").orElse("empty")
         LOG.info("Recupération paramètre numgestion : $numgestion")
-            if (!numgestion.equals("empty")) {
+            if (numgestion != "empty") {
                 var pdfbyNumGestion : ByteArray? = null
                 runBlocking {
                     launch {

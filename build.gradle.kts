@@ -6,8 +6,8 @@ plugins {
     id ("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
     id ("org.sonarqube") version "2.7"
     id ("jacoco")
+    `maven-publish`
 }
-
 
 group = "fr.convergence.proddoc"
 version = "1.0-SNAPSHOT"
@@ -29,7 +29,28 @@ repositories {
     mavenCentral()
 }
 
+publishing {
+    repositories {
+        maven {
+            url = uri("https://mymavenrepo.com/repo/ah37AFHxnt3Fln1mwTvi/")
+            credentials {
+                username = myMavenRepoUser
+                password = myMavenRepoPassword
+            }
+        }
+        mavenLocal()
+    }
+
+    publications {
+        create<MavenPublication>("Condor") {
+            from(components["java"])
+        }
+    }
+}
+
+
 dependencies {
+
     implementation(kotlin("stdlib-jdk8"))
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:$quarkusVersion"))
     implementation("io.quarkus:quarkus-resteasy-jackson")

@@ -22,7 +22,7 @@ class KbisReactiveService {
         //Appel non-bloquant au WS myGreffe
         val client = WebClient.create(Vertx.vertx())
         //@TODO applicquer recommandation un client unique pour toute l'appli au lieu de l'instancier à chaque appel de la fonction
-        var pdf = client
+        val pdf = client
             .get(80, "172.31.5.20", "/convergence-greffe-web/rest/kbis/search?numGestion=$nogest")
             .rxSend()
             .map { it.bodyAsBuffer().bytes }
