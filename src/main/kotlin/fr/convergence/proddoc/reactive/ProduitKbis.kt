@@ -6,6 +6,7 @@ import fr.convergence.proddoc.services.rest.client.KbisService
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
 import org.eclipse.microprofile.reactive.messaging.Incoming
+import org.eclipse.microprofile.rest.client.inject.RestClient
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
@@ -22,14 +23,4 @@ public class ProduitKbis(@Inject var cache: ProduitCache) {
         LOG.info("Réception du produit : $produit")
         cache.addParameter(produit)
     }
-
-    @Incoming("produitkbis")
-    fun ecouteKbis(produit: Produit) {
-        LOG.info("Réception demande Kbis : $produit")
-        val kbisSrv: KbisService? = null
-        val kbisPDF = kbisSrv?.getPDFbyNumGestion(produit.valeur)
-        LOG.info("Taille du Kbis : ${kbisPDF?.size}")
-    }
-
-    //@TODO un outgoing sur le meme topic kbisOK ou kbisKO
 }
