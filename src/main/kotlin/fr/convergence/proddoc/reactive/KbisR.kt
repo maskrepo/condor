@@ -2,7 +2,7 @@ package fr.convergence.proddoc.reactive
 
 import fr.convergence.proddoc.libs.model.Produit
 import fr.convergence.proddoc.libs.service.ProduitCache
-import fr.convergence.proddoc.services.rest.client.KbisService
+import fr.convergence.proddoc.services.rest.client.KbisReactiveService
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
 import org.eclipse.microprofile.reactive.messaging.Incoming
@@ -12,24 +12,21 @@ import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @ApplicationScoped
-public class Kbis(@Inject var cache: ProduitCache) {
+public class KbisR(@Inject var cache: ProduitCache) {
 
     companion object {
         private val LOG: Logger = getLogger(Produit::class.java)
     }
 
-    @Inject
-    @RestClient
-    val kbisSrv: KbisService? = null
+    val kbisSrv= KbisReactiveService()
 
-    @Incoming("kbis")
-    @Outgoing("kbis_fini")
+    @Incoming("kbisR")
+    @Outgoing("kbisR_fini")
     fun ecouteKbis(produit: Produit): Int {
-        LOG.info("Réception demande Kbis : ${produit.valeur}")
-        LOG.info(System.getProperties())
+        LOG.info("Réception demande KbisR : ${produit.valeur}")
 
         try {
-            val kbisPDF = kbisSrv?.getPDFbyNumGestion(produit.valeur)
+            val kbisPDF = produit.valeur?.let { kbisSrv.getPDFbyNumGestion(it) }
             LOG.info("Taille du Kbis : ${kbisPDF?.size}")
             if (kbisPDF != null) {
                 return (kbisPDF.size)
@@ -41,7 +38,7 @@ public class Kbis(@Inject var cache: ProduitCache) {
         catch (e :Exception){
             LOG.error("Problème sur la récupération du Kbis")
             LOG.error(e.message)
-            return 0
+            return 0a
         }
         finally {
             //rien de spécial on a déjà retourné soit la taille du Kbis soit 0

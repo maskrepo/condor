@@ -9,6 +9,8 @@ import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.impl.HttpSolrClient
 import org.apache.solr.client.solrj.impl.XMLResponseParser
 import org.apache.solr.common.SolrInputDocument
+import java.io.IOException
+import java.lang.IllegalArgumentException
 
 
 class KbisReactiveService {
@@ -17,8 +19,12 @@ class KbisReactiveService {
         private val LOG: Logger = LoggerFactory.getLogger(KbisAsXMLReactive::class.java)
     }
 
+    private val urlSolrCore = "http://172.31.4.237:8983/solr/kbispdf" //@TODO faut-il que cette variable soit sortie quelquepart d'autre dans le projet ?
+//    private val urlSolrCore = "http://localhost:8983/solr/kbispdf"
+    private val gr_nume = "0101"
+
     fun getPDFbyNumGestion(nogest: String) : ByteArray{
-        LOG.info("entree dans KbisReactiveService.getPDFbyNumGestion")
+
         //Appel non-bloquant au WS myGreffe
         val client = WebClient.create(Vertx.vertx())
         //@TODO applicquer recommandation un client unique pour toute l'appli au lieu de l'instancier à chaque appel de la fonction
@@ -30,62 +36,51 @@ class KbisReactiveService {
         // il y a subscribe mais je n'arrive pas à l'utilise
 
         // insertion du kbis PDF dans solr
-        // création d'un client solr http --> @TODO à mettre en commun quelque part
-        val urlString = "http://localhost:8983/solr/kbispdf"
-        val solr: HttpSolrClient = HttpSolrClient.Builder(urlString).build()
+        val documentID="$gr_nume$nogest"
+        if (putPDFintoSolr(documentID, pdf) ) return(pdf)
+        else throw IOException("Impossible d'insérer document $documentID dans solr")
+        //@TODO rappel kafka pour indiquer que kbis récupéré et déposé dans solr OK
+    }
 
-        LOG.info("recherche si kbis pdf existe déjà pour ce dossier")
+    private fun putPDFintoSolr(docID: String, pdfFile: ByteArray): Boolean {
+
         try {
+
+
+            val urlString = urlSolrCore
+            val solr: HttpSolrClient = HttpSolrClient.Builder(urlString).build()
+
+            LOG.info("recherche si le document existe déjà dans le core")
+
             val query = SolrQuery()
-            query.set("q", "kbisid:0101$nogest")
+            query.set("q", "kbisid:$docID")
             val response = solr.query(query)
-
             val docList = response.results
-            when (docList.numFound.toInt()) {
-                1 -> {
-                    // si un seul document est bien trouvé on le remplace
-                    for (doc in docList) {
-                        LOG.info("insertion dans solr du kbis PDF 0101$nogest")
-                        solr.setParser(XMLResponseParser())
-                        val document = SolrInputDocument()
-                        document.addField("kbisid", "0101$nogest")
-                        document.addField("kbispdf", pdf)
-                        document.addField("version", "1")
-                        document.addField("numerolot", "1")
-                        solr.add(document)
-                        solr.commit()
-                        LOG.info("insertion dans solr terminée")
-                    }
-
-                }
-                0 -> {
-                    LOG.info("insertion dans solr du kbis PDF 0101$nogest")
-                    solr.setParser(XMLResponseParser())
-                    val document = SolrInputDocument()
-                    document.addField("kbisid", "0101$nogest")
-                    document.addField("kbispdf", pdf)
-                    document.addField("version", "1")
-                    document.addField("numerolot", "1")
-                    solr.add(document)
-                    solr.commit()
-                    LOG.info("insertion dans solr terminée")
-                }
-                else -> {
-                    // sinon on lève une erreur
-                    throw Exception("kbis 0101$nogest impossible à ajouter dan solr")
-
-                }
+            if (docList.numFound >= 1) {
+                LOG.error("Insertion dans solr impossible : le document kbisid:$docID existe déjà")
+                throw IllegalArgumentException("Insertion dans solr impossible : le document kbisid:$docID existe déjà\"")
+            } else {
+                LOG.info("insertion dans solr du kbis PDF $docID")
+                solr.setParser(XMLResponseParser())
+                val document = SolrInputDocument()
+                document.addField("kbisid", "$docID")
+                document.addField("kbispdf", pdfFile)
+                document.addField("version", "1")
+                document.addField("numerolot", "1")
+                solr.add(document)
+                solr.commit()
+                LOG.info("insertion dans solr terminée")
             }
         }
-        catch (e :Exception){
+        catch (e: Exception){
+            // en cas de KO solr on catch et on retourne un KO
             LOG.error(e.message)
+            return false
         }
         finally {
-            LOG.info("getPDFbyNumGestion : sortie")
-            return (pdf)
+            // je ne sais pas quoi faire de plus :-)
         }
-
-        //@TODO rappel kafka pour indiquer que kbis récupéré et déposé dans solr OK
+        return true
     }
 
     fun getXMLbyNumGestion(nogest: String): String {
