@@ -1,6 +1,5 @@
 package fr.convergence.proddoc.lib.service
 
-import fr.convergence.proddoc.controller.KbisAsPDFReactive
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import java.io.File
@@ -20,7 +19,7 @@ object KbisCache {
     }
 
     fun getFileFromIndex(i: String): File? {
-        if (!KbisMap.isEmpty()) return KbisMap.get(i)
+        if (KbisMap.isNotEmpty()) return KbisMap.get(i)
         else return (null)
     }
 
