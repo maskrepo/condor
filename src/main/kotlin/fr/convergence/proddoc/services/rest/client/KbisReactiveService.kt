@@ -19,8 +19,8 @@ class KbisReactiveService {
         private val LOG: Logger = LoggerFactory.getLogger(KbisAsXMLReactive::class.java)
     }
 
-    private val urlSolrCore = "http://172.31.4.237:8983/solr/kbispdf" //@TODO faut-il que cette variable soit sortie quelquepart d'autre dans le projet ?
-//    private val urlSolrCore = "http://localhost:8983/solr/kbispdf"
+//    private val urlSolrCore = "http://172.31.4.237:8983/solr/kbispdf" //@TODO faut-il que cette variable soit sortie quelquepart d'autre dans le projet ?
+    private val urlSolrCore = "http://localhost:8983/solr/kbispdf"
     private val gr_nume = "0101"
 
     fun getPDFbyNumGestion(nogest: String) : ByteArray{
@@ -36,17 +36,16 @@ class KbisReactiveService {
         // il y a subscribe mais je n'arrive pas à l'utilise
 
         // insertion du kbis PDF dans solr
-        val documentID="$gr_nume$nogest"
-        if (putPDFintoSolr(documentID, pdf) ) return(pdf)
-        else throw IOException("Impossible d'insérer document $documentID dans solr")
+//        val documentID="$gr_nume$nogest"
+//        if (putPDFintoSolr(documentID, pdf) ) return(pdf)
+//        else throw IOException("Impossible d'insérer document $documentID dans solr")
         //@TODO rappel kafka pour indiquer que kbis récupéré et déposé dans solr OK
+        return(pdf)
     }
 
     private fun putPDFintoSolr(docID: String, pdfFile: ByteArray): Boolean {
 
         try {
-
-
             val urlString = urlSolrCore
             val solr: HttpSolrClient = HttpSolrClient.Builder(urlString).build()
 

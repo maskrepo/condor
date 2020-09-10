@@ -1,5 +1,6 @@
 package fr.convergence.proddoc.reactive
 
+import fr.convergence.proddoc.lib.service.KbisCache
 import fr.convergence.proddoc.libs.model.Produit
 import fr.convergence.proddoc.libs.service.ProduitCache
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
@@ -22,23 +23,24 @@ public class KbisR(@Inject var cache: ProduitCache) {
 
     @Incoming("kbisR")
     @Outgoing("kbisR_fini")
-    fun ecouteKbis(produit: Produit): Int {
+    fun ecouteKbis(produit: Produit): String {
         LOG.info("Réception demande KbisR : ${produit.valeur}")
 
         try {
             val kbisPDF = produit.valeur?.let { kbisSrv.getPDFbyNumGestion(it) }
             LOG.info("Taille du Kbis : ${kbisPDF?.size}")
             if (kbisPDF != null) {
-                return (kbisPDF.size)
+                KbisCache.putPDFintoFS(kbisPDF, produit.valeur!!)
+                return ("http://127.0.0.1:8080/kbis/pdfidx/${produit.valeur}")
             } else {
-                LOG.info("Taille du Kbis = 0")
-                return 0
+                LOG.error("Taille du Kbis = 0")
+                return "Kbis_KO"
             }
         }
         catch (e :Exception){
             LOG.error("Problème sur la récupération du Kbis")
             LOG.error(e.message)
-            return 0a
+            return "Kbis_KO"
         }
         finally {
             //rien de spécial on a déjà retourné soit la taille du Kbis soit 0
