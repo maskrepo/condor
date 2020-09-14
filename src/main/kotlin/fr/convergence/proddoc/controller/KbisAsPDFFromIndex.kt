@@ -16,9 +16,12 @@ class KbisAsPDFFromIndex {
 //   si appel sur le path, retourne le kbis pdf en le récupérant dans le cache
     @GET
     @Path("{idx}")
-    fun numGestionKbis(@PathParam("idx") identifiant: String?): ByteArray? {
-    val myPDF: File?
-    myPDF = KbisCache.recupFichierCache(identifiant!!)
+    fun numGestionKbis(@PathParam("idx") identifiant: String): ByteArray? {
+
+        requireNotNull(identifiant, {"L'identifiant reçu est null"})
+        val myPDF: File?
+        myPDF = KbisCache.recupFichierCache(identifiant)
+
         return (myPDF!!.readBytes())
     }
 }

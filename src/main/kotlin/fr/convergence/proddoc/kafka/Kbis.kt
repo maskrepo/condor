@@ -26,19 +26,23 @@ public class Kbis(@Inject var cache :ProduitCache, @Inject val kbisSrv :KbisReac
 //    3) publie un message de type "OK" + l'url du kbis récupérable (Outgoing)
     @Incoming("kbis")
     @Outgoing("kbis_fini")
-    fun trtEvtReceptionKbis(produit: Produit): String {
-        LOG.info("Réception demande Kbis : ${produit.valeur}")
+    fun traitementEvenementtReceptionKbis(produit: Produit): String {
+
+        // faire des assertions pour bien s'assurer que produit n'est pas null
+        // puis enchaîner sur le code métier
+        // require / check / assert
 
         try {
-            val kbisPDF = produit.valeur?.let { kbisSrv.getPDFbyNumGestion(it) }
-            LOG.debug("Taille du Kbis : ${kbisPDF?.size}")
-            if (kbisPDF != null) {
-                KbisCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), produit.valeur!!)
-                return (creeURLKbisLocale(produit.valeur!!))
-            } else {
-                LOG.error("Taille du Kbis = 0")
-                return "Kbis_KO"
-            }
+            requireNotNull(produit) { "Produit est null"}
+            requireNotNull(produit.valeur) {  "Produit.valeur est null"}
+            val numeroDeGestion = produit.valeur!!
+
+            LOG.info("Réception demande Kbis : $numeroDeGestion")
+            val kbisPDF =  kbisSrv.getPDFbyNumGestion(numeroDeGestion)
+            LOG.debug("Taille du Kbis : ${kbisPDF.size}")
+            KbisCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
+
+            return (creeURLKbisLocale(numeroDeGestion))
         }
         catch (e :Exception){
             LOG.error("Problème sur le traitement de l'évènement de réception du Kbis", e)
