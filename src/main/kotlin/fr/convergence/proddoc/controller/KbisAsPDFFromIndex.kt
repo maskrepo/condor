@@ -1,11 +1,8 @@
 package fr.convergence.proddoc.controller
 
 import fr.convergence.proddoc.lib.service.KbisCache
-import io.vertx.core.logging.Logger
-import io.vertx.core.logging.LoggerFactory
 import java.io.File
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.PathParam
@@ -16,15 +13,12 @@ import javax.ws.rs.Produces
 @ApplicationScoped
 class KbisAsPDFFromIndex {
 
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(KbisAsPDFFromIndex::class.java)
-    }
-
+//   si appel sur le path, retourne le kbis pdf en le récupérant dans le cache
     @GET
     @Path("{idx}")
-    fun numGestionKbis(@PathParam("idx") idx: String?): ByteArray? {
-        var myPDF: File? = null
-        myPDF = KbisCache.getFileFromIndex(idx!!)
+    fun numGestionKbis(@PathParam("idx") identifiant: String?): ByteArray? {
+    val myPDF: File?
+    myPDF = KbisCache.recupFichierCache(identifiant!!)
         return (myPDF!!.readBytes())
     }
 }

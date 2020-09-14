@@ -4,7 +4,9 @@ import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.ext.web.client.WebClient
+import javax.enterprise.context.ApplicationScoped
 
+@ApplicationScoped
 class KbisReactiveService {
 
     companion object {
