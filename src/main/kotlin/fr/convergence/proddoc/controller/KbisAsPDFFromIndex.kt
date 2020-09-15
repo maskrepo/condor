@@ -19,8 +19,7 @@ class KbisAsPDFFromIndex {
     fun numGestionKbis(@PathParam("numgestion") numgestion: String): ByteArray? {
 
         requireNotNull(numgestion, {"L'identifiant reçu est null"})
-        val myPDF: File?
-        myPDF = KbisCache.recupFichierCache(numgestion)
+        val myPDF = KbisCache.recupFichierCache(numgestion)
 
         return (myPDF!!.readBytes())
     }
