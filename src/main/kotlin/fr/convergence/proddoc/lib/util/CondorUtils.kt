@@ -18,7 +18,7 @@ fun creeFichierTempBinaire(fichier: ByteArray): File {
 //    l'URL de base est un paramètre "applicatif"....
     fun creeURLKbisLocale(identifiant :String) :String {
         val baseURL =  "http://127.0.0.1:8080/"
-        val pathURL = "kbis/pdfidx/$identifiant"
+        val pathURL = "kbis/pdfnumgestion/$identifiant"
 
         return (baseURL+pathURL)
     }
