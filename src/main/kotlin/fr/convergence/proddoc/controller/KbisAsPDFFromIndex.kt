@@ -1,7 +1,6 @@
 package fr.convergence.proddoc.controller
 
 import fr.convergence.proddoc.lib.service.KbisCache
-import java.io.File
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.GET
 import javax.ws.rs.Path

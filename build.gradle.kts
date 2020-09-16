@@ -1,4 +1,7 @@
 val quarkusVersion: String = "1.5.0.Final"
+val MaskModelVersion = "1.1.1-SNAPSHOT"
+val MaskCacheVersion = "1.0.5-SNAPSHOT"
+val MaskSerdesVersion = "1.0.1-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.3.61"
@@ -48,7 +51,6 @@ publishing {
     }
 }
 
-
 dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
@@ -67,11 +69,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     implementation("io.quarkus:quarkus-vertx-web")
     implementation("io.vertx:vertx-web-client:3.9.2")
-    implementation("org.apache.solr:solr-solrj:8.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
 
-    implementation("fr.convergence.proddoc.libs:MaskCache:1.0.2-SNAPSHOT")
-    implementation("fr.convergence.proddoc.libs:MaskModel:1.0.0-SNAPSHOT")
-    implementation("fr.convergence.proddoc.util:MaskSerdes:1.0-SNAPSHOT")
+    implementation("fr.convergence.proddoc.libs:MaskCache:$MaskCacheVersion")
+    implementation("fr.convergence.proddoc.libs:MaskModel:$MaskModelVersion")
+    implementation("fr.convergence.proddoc.util:MaskSerdes:$MaskSerdesVersion")
 
     testImplementation("io.quarkus:quarkus-junit5")
 }

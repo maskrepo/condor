@@ -13,7 +13,13 @@ class KbisReactiveService {
         private val LOG: Logger = LoggerFactory.getLogger(KbisReactiveService::class.java)
     }
 
-    fun getPDFbyNumGestion(nogest: String) : ByteArray{
+    fun getPDFbyNumGestion(nogest: String, apostille :String = "NON", sceau :String = "NON",
+                            signature :String ="NON") : ByteArray{
+
+        LOG.debug("Kbis demandé : $nogest / apostille=$apostille / sceau=$sceau / signature=$signature")
+        require(apostille == "OUI" || apostille == "NON"){"valeur apostille non valide"}
+        require(sceau == "OUI" || sceau == "NON"){"valeur sceau non valide"}
+        require(signature == "OUI" || signature == "NON"){"valeur signature non valide"}
 
         //Appel non-bloquant au WS myGreffe
         val client = WebClient.create(Vertx.vertx())
