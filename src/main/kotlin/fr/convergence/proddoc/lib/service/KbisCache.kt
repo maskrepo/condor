@@ -16,11 +16,13 @@ object KbisCache {
 //    ne retourne rien ; si ça pète, ça lève une exception à gérer par l'appelant
     fun deposeFichierCache(fi: File, identifiant :String) {
         KbisMap.put(identifiant, fi)
-        LOG.info("putFileInCache - taille de la map en sortie: ${KbisMap.size}")
+        LOG.debug("putFileInCache - kbis $identifiant mis en cache, taille de la map en sortie: ${KbisMap.size}")
     }
 
-//    récupère un fichier dans le cache à partir de son identifiant
-//    retourne le fichier ou null si rien trouvé
+    /**
+     *  récupère un fichier dans le cache à partir de son identifiant
+     *  retourne le fichier ou null si rien trouvé
+     */
     fun recupFichierCache(identifant: String): File? {
         if (KbisMap.isNotEmpty()) {
             return KbisMap.get(identifant)

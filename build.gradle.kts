@@ -1,10 +1,11 @@
 val quarkusVersion: String = "1.5.0.Final"
-val MaskModelVersion = "1.1.1-SNAPSHOT"
+val MaskModelVersion = "1.1.2-SNAPSHOT"
 val MaskCacheVersion = "1.0.5-SNAPSHOT"
 val MaskSerdesVersion = "1.0.1-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.4.10"
+    kotlin("plugin.serialization") version "1.4.10"
     id ("io.quarkus") version "1.5.0.Final"
     id ("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
     id ("org.sonarqube") version "2.7"
@@ -13,7 +14,7 @@ plugins {
 }
 
 group = "fr.convergence.proddoc"
-version = "1.0-SNAPSHOT"
+version = "1.0.1-SNAPSHOT"
 
 // je mets ces 2 variables ici car je n'arrive pas à les mettre ailleurs
 // (dans settings.gradle.kts par exemple)
