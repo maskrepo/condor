@@ -3,14 +3,18 @@ package fr.convergence.proddoc.kafka
 import fr.convergence.proddoc.lib.service.KbisCache
 import fr.convergence.proddoc.lib.util.CondorUtils.creeFichierTempBinaire
 import fr.convergence.proddoc.lib.util.CondorUtils.creeURLKbisLocale
-import fr.convergence.proddoc.model.lib.MaskMessage
+import fr.convergence.proddoc.model.lib.obj.MaskEntete
+import fr.convergence.proddoc.model.lib.obj.MaskMessage
+import fr.convergence.proddoc.model.lib.obj.MaskReponse
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.model.metier.KbisRetour
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
+import kotlinx.serialization.json.Json
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.eclipse.microprofile.reactive.messaging.Outgoing
+import java.time.LocalDateTime
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
@@ -47,20 +51,17 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
             KbisCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
             val urlKbis = creeURLKbisLocale(numeroDeGestion)
 
-            return MaskMessage.of(
-                KbisRetour("OK", urlKbis),
-                message.entete.idEmetteur,
-                message.entete.idGreffe,
-                message.entete.typeDemande
-            )
+            return MaskMessage(MaskEntete(message.entete.idUnique,message.entete.idLot, LocalDateTime.now(),
+                    "condor",message.entete.idGreffe, message.entete.typeDemande),
+                    Json.parseToJsonElement(KbisRetour(urlKbis).toString()),
+                    MaskReponse((true)))
         }
         catch (e :Exception) {
             LOG.error("Problème sur le traitement de l'évènement de réception du Kbis", e)
-            return MaskMessage.of(
-                KbisRetour("KO", e.toString()),
-                message.entete.idEmetteur,
-                message.entete.idGreffe,
-                message.entete.typeDemande)
+            return MaskMessage(MaskEntete(message.entete.idUnique,message.entete.idLot, LocalDateTime.now(),
+                "condor",message.entete.idGreffe, message.entete.typeDemande),
+                null,
+                MaskReponse(false,"Erreur dans le traitement d l'évènement Réception Kbis",e.stackTrace.toString()))
         }
     }
 }

@@ -1,7 +1,7 @@
-val quarkusVersion: String = "1.5.0.Final"
-val MaskModelVersion = "1.1.2-SNAPSHOT"
-val MaskCacheVersion = "1.0.5-SNAPSHOT"
-val MaskSerdesVersion = "1.0.1-SNAPSHOT"
+val quarkusVersion: String = "1.5.2.Final"
+val MaskModelVersion = "1.0.0-SNAPSHOT"
+val MaskCacheVersion = "1.0.1-SNAPSHOT"
+val MaskUtilVersion = "1.0.0-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "fr.convergence.proddoc"
-version = "1.0.1-SNAPSHOT"
+version = "1.0.2-SNAPSHOT"
 
 // je mets ces 2 variables ici car je n'arrive pas à les mettre ailleurs
 // (dans settings.gradle.kts par exemple)
@@ -22,6 +22,7 @@ val myMavenRepoUser = "myMavenRepo"
 val myMavenRepoPassword ="mask"
 
 repositories {
+    mavenLocal()
     maven {
         url = uri("https://mymavenrepo.com/repo/OYRB63ZK3HSrWJfc2RIB/")
         credentials {
@@ -29,7 +30,6 @@ repositories {
             password = myMavenRepoPassword
         }
     }
-    mavenLocal()
     mavenCentral()
 }
 
@@ -46,7 +46,7 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("Condor") {
+        create<MavenPublication>("mask-model") {
             from(components["java"])
         }
     }
@@ -72,19 +72,19 @@ dependencies {
     implementation("io.vertx:vertx-web-client:3.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
 
-    implementation("fr.convergence.proddoc.libs:MaskCache:$MaskCacheVersion")
-    implementation("fr.convergence.proddoc.libs:MaskModel:$MaskModelVersion")
-    implementation("fr.convergence.proddoc.util:MaskSerdes:$MaskSerdesVersion")
+    implementation("fr.convergence.proddoc.lib:mask-model:$MaskModelVersion")
+    implementation("fr.convergence.proddoc.lib:mask-util:$MaskUtilVersion")
+    implementation("fr.convergence.proddoc.lib:mask-cache:$MaskCacheVersion")
 
     testImplementation("io.quarkus:quarkus-junit5")
 }
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
 }
 
