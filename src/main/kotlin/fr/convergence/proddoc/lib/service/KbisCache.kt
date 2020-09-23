@@ -10,13 +10,13 @@ object KbisCache {
 
     private val LOG: Logger = LoggerFactory.getLogger(KbisCache::class.java)
 
-    private var KbisMap: MutableMap<String, File> = mutableMapOf()
+    private var FichierMap: MutableMap<String, File> = mutableMapOf()
 
 //    met le fichier transmis reçu dans une map
 //    ne retourne rien ; si ça pète, ça lève une exception à gérer par l'appelant
     fun deposeFichierCache(fi: File, identifiant :String) {
-        KbisMap.put(identifiant, fi)
-        LOG.debug("putFileInCache - kbis $identifiant mis en cache, taille de la map en sortie: ${KbisMap.size}")
+        FichierMap.put(identifiant, fi)
+        LOG.debug("fichier $identifiant mis en cache, taille de la map en sortie: ${FichierMap.size}")
     }
 
     /**
@@ -24,8 +24,8 @@ object KbisCache {
      *  retourne le fichier ou null si rien trouvé
      */
     fun recupFichierCache(identifant: String): File? {
-        if (KbisMap.isNotEmpty()) {
-            return KbisMap.get(identifant)
+        if (FichierMap.isNotEmpty()) {
+            return FichierMap.get(identifant)
         } else {
             return (null)
         }

@@ -1,20 +1,17 @@
 package fr.convergence.proddoc.kafka
 
 import fr.convergence.proddoc.lib.service.KbisCache
-import fr.convergence.proddoc.lib.util.CondorUtils.creeFichierTempBinaire
-import fr.convergence.proddoc.lib.util.CondorUtils.creeURLKbisLocale
-import fr.convergence.proddoc.model.lib.obj.MaskEntete
+import fr.convergence.proddoc.lib.util.WSUtils.creeFichierTempBinaire
+import fr.convergence.proddoc.lib.util.WSUtils.creeURLKbisLocale
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
-import fr.convergence.proddoc.model.lib.obj.MaskReponse
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.model.metier.KbisRetour
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
+import fr.convergence.proddoc.util.maskIOHandler
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
-import kotlinx.serialization.json.Json
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.eclipse.microprofile.reactive.messaging.Outgoing
-import java.time.LocalDateTime
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
@@ -35,33 +32,24 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
 
     @Incoming("kbis")
     @Outgoing("kbis_fini")
-    fun traitementEvenementtReceptionKbis(message: MaskMessage): MaskMessage {
+    fun traitementEvenementtReceptionKbis(message: MaskMessage): MaskMessage = maskIOHandler(message) {
 
-        try {
+        //@TODO ces requires sont à basculer dans le maskIOHadler
+        requireNotNull(message.entete.typeDemande) { "message.entete.typeDemande est null" }
+        requireNotNull(message.objetMetier) { "message.objectMetier est null" }
 
-            requireNotNull(message.entete.typeDemande) { "message.entete.typeDemande est null" }
-            requireNotNull(message.objetMetier) { "message.objectMetier est null" }
-            val demandeKbis = message.recupererObjetMetier<KbisDemande>()
-            val numeroDeGestion = demandeKbis.numeroGestion
-            LOG.debug("Réception demande Kbis : $numeroDeGestion")
+        val demandeKbis = message.recupererObjetMetier<KbisDemande>()
+        val numeroDeGestion = demandeKbis.numeroGestion
+        LOG.debug("Réception évènement demande Kbis n° : $numeroDeGestion")
 
-            val kbisPDF = kbisSrv.getPDFbyNumGestion(numeroDeGestion, demandeKbis.avecApostille,
-                                                    demandeKbis.avecSceau, demandeKbis.avecSignature)
+        val kbisPDF = kbisSrv.getPDFbyNumGestion(
+            numeroDeGestion, demandeKbis.avecApostille,
+            demandeKbis.avecSceau, demandeKbis.avecSignature)
 
-            KbisCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
-            val urlKbis = creeURLKbisLocale(numeroDeGestion)
+        KbisCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
+        val urlKbis = creeURLKbisLocale(numeroDeGestion)
+        LOG.debug("URL locale du Kbis en cache : $urlKbis")
 
-            return MaskMessage(MaskEntete(message.entete.idUnique,message.entete.idLot, LocalDateTime.now(),
-                    "condor",message.entete.idGreffe, message.entete.typeDemande),
-                    Json.parseToJsonElement(KbisRetour(urlKbis).toString()),
-                    MaskReponse((true)))
-        }
-        catch (e :Exception) {
-            LOG.error("Problème sur le traitement de l'évènement de réception du Kbis", e)
-            return MaskMessage(MaskEntete(message.entete.idUnique,message.entete.idLot, LocalDateTime.now(),
-                "condor",message.entete.idGreffe, message.entete.typeDemande),
-                null,
-                MaskReponse(false,"Erreur dans le traitement d l'évènement Réception Kbis",e.stackTrace.toString()))
-        }
+        KbisRetour(urlKbis).toString()
     }
 }
