@@ -1,6 +1,6 @@
 package fr.convergence.proddoc.controller
 
-import fr.convergence.proddoc.lib.service.KbisCache
+import fr.convergence.proddoc.lib.service.FichierCache
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.GET
 import javax.ws.rs.Path
@@ -21,7 +21,7 @@ class KbisAsPDFFromIndex {
     fun numGestionKbis(@PathParam("numgestion") numgestion: String): Response {
 
         requireNotNull(numgestion, {"L'identifiant reçu est null"})
-        val myPDF = KbisCache.recupFichierCache(numgestion)
+        val myPDF = FichierCache.recupFichierCache(numgestion)
 
         if (myPDF==null) {
             return Response

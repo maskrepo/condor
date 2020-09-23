@@ -1,7 +1,7 @@
 val quarkusVersion: String = "1.5.2.Final"
 val MaskModelVersion = "1.0.0-SNAPSHOT"
 val MaskCacheVersion = "1.0.1-SNAPSHOT"
-val MaskUtilVersion = "1.0.0-SNAPSHOT"
+val MaskUtilVersion = "1.0.1-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -54,20 +54,12 @@ publishing {
 
 dependencies {
 
-    implementation(kotlin("stdlib-jdk8"))
+
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:$quarkusVersion"))
-    implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-rest-client")
-    implementation("io.quarkus:quarkus-kotlin")
-    implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kafka-client:$quarkusVersion")
     implementation("io.quarkus:quarkus-smallrye-reactive-messaging-kafka:$quarkusVersion")
-    implementation("io.quarkus:quarkus-smallrye-reactive-messaging:$quarkusVersion")
-    implementation("io.quarkus:quarkus-kafka-streams:$quarkusVersion")
-    implementation("io.debezium:debezium-core:1.1.2.Final")
-    implementation("org.reflections:reflections:0.9.12")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     implementation("io.quarkus:quarkus-vertx-web")
     implementation("io.vertx:vertx-web-client:3.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")

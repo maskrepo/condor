@@ -6,9 +6,9 @@ import java.io.File
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-object KbisCache {
+object FichierCache {
 
-    private val LOG: Logger = LoggerFactory.getLogger(KbisCache::class.java)
+    private val LOG: Logger = LoggerFactory.getLogger(FichierCache::class.java)
 
     private var FichierMap: MutableMap<String, File> = mutableMapOf()
 

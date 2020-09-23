@@ -1,6 +1,6 @@
 package fr.convergence.proddoc.services.rest.client
 
-import fr.convergence.proddoc.lib.util.WSUtils
+import fr.convergence.proddoc.util.WSUtils
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import java.io.ByteArrayInputStream

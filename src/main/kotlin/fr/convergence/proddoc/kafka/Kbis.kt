@@ -1,12 +1,12 @@
 package fr.convergence.proddoc.kafka
 
-import fr.convergence.proddoc.lib.service.KbisCache
-import fr.convergence.proddoc.lib.util.WSUtils.creeFichierTempBinaire
-import fr.convergence.proddoc.lib.util.WSUtils.creeURLKbisLocale
+import fr.convergence.proddoc.lib.service.FichierCache
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.model.metier.KbisRetour
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
+import fr.convergence.proddoc.util.WSUtils.creeFichierTempBinaire
+import fr.convergence.proddoc.util.WSUtils.creeURLKbisLocale
 import fr.convergence.proddoc.util.maskIOHandler
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
@@ -46,7 +46,7 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
             numeroDeGestion, demandeKbis.avecApostille,
             demandeKbis.avecSceau, demandeKbis.avecSignature)
 
-        KbisCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
+        FichierCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
         val urlKbis = creeURLKbisLocale(numeroDeGestion)
         LOG.debug("URL locale du Kbis en cache : $urlKbis")
 
