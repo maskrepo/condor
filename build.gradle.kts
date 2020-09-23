@@ -54,7 +54,6 @@ publishing {
 
 dependencies {
 
-
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:$quarkusVersion"))
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-rest-client")
