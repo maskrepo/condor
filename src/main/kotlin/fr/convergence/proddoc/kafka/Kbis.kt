@@ -1,12 +1,10 @@
 package fr.convergence.proddoc.kafka
 
-import fr.convergence.proddoc.lib.service.FichierCache
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
+import fr.convergence.proddoc.model.metier.FichierEcrit
 import fr.convergence.proddoc.model.metier.KbisDemande
-import fr.convergence.proddoc.model.metier.KbisRetour
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
-import fr.convergence.proddoc.util.WSUtils.creeFichierTempBinaire
-import fr.convergence.proddoc.util.WSUtils.creeURLKbisLocale
+import fr.convergence.proddoc.util.WSUtils
 import fr.convergence.proddoc.util.maskIOHandler
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
@@ -26,13 +24,13 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
      * si un MaskMessage arrive sur le topic "kbis" (Incoming) :
      * 1) récupère le kbis auprès de myGreffe, selon les paramètres transmis dans le MaskMessage reçu
      * 2) demande le stockage du fichier dans cache
-     * 3) publie un message de type MaskMessage également "OK" + l'url du kbis récupérable (Outgoing)
-     *  ou bien "KO" + exception
+     * 3) c'est tout : c'est KbisReponse qui écoute si un Kbis est mis en cache pour répondre sur le
+     * topic KBIS_REPONSE
      **/
 
     @Incoming("kbis")
-    @Outgoing("kbis_fini")
-    fun traitementEvenementtReceptionKbis(message: MaskMessage): MaskMessage = maskIOHandler(message) {
+    @Outgoing("fichier_info")
+    fun traitementEvenementReceptionKbis(message: MaskMessage) : MaskMessage = maskIOHandler(message) {
 
         //@TODO ces requires sont à basculer dans le maskIOHadler
         requireNotNull(message.entete.typeDemande) { "message.entete.typeDemande est null" }
@@ -46,10 +44,8 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
             numeroDeGestion, demandeKbis.avecApostille,
             demandeKbis.avecSceau, demandeKbis.avecSignature)
 
-        FichierCache.deposeFichierCache(creeFichierTempBinaire(kbisPDF), numeroDeGestion)
-        val urlKbis = creeURLKbisLocale(numeroDeGestion)
-        LOG.debug("URL locale du Kbis en cache : $urlKbis")
+        val kbisEcrit = WSUtils.creeFichierTempBinaire(kbisPDF)
+        FichierEcrit(kbisEcrit.absolutePath, kbisEcrit.name, numeroDeGestion)
 
-        KbisRetour(urlKbis).toString()
     }
 }
