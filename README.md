@@ -1,4 +1,6 @@
 # Condor (service Kbis)
+Lancement : ./gradlew quarkusdev <br>
+(port 8090)
 
 ## Rôle du service
 Fournir un Kbis :
@@ -14,8 +16,9 @@ STOCKER_FICHIER_REPONSE<br>
 KBIS_REPONSE<br>
 
 ## Diagramme de séquence
+Sous Confluence : https://zedreamteam.atlassian.net/wiki/spaces/MASK/pages/164167681/Service%2BKbis%2Bcondor
 
-## Exemple de message reçu
+## Exemple de message 
 ``
 {
   "entete": {
