@@ -3,14 +3,12 @@ package fr.convergence.proddoc.kafka
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.FichierAccessible
 import fr.convergence.proddoc.model.metier.KbisRetour
-import fr.convergence.proddoc.services.rest.client.KbisReactiveService
 import fr.convergence.proddoc.util.maskIOHandler
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.eclipse.microprofile.reactive.messaging.Outgoing
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 @ApplicationScoped
 class KbisReponse {

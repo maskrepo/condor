@@ -4,6 +4,7 @@ import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.FichierEcrit
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
+import fr.convergence.proddoc.util.FichiersUtils
 import fr.convergence.proddoc.util.WSUtils
 import fr.convergence.proddoc.util.maskIOHandler
 import io.vertx.core.logging.Logger
@@ -44,7 +45,7 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
             numeroDeGestion, demandeKbis.avecApostille,
             demandeKbis.avecSceau, demandeKbis.avecSignature)
 
-        val kbisEcrit = WSUtils.creeFichierTempBinaire(kbisPDF)
+        val kbisEcrit = FichiersUtils.creeFichierTempBinaire(kbisPDF)
         FichierEcrit(kbisEcrit.absolutePath, kbisEcrit.name, numeroDeGestion)
 
     }
