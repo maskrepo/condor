@@ -17,8 +17,8 @@ class KbisReponse {
         private val LOG: Logger = getLogger(KbisReponse::class.java)
     }
 
-    @Incoming("fichiercache_fini")
-    @Outgoing("kbis_fini")
+    @Incoming("stocker_fichier_reponse")
+    @Outgoing("kbis_reponse")
     fun traitementEvenementKbisDansCache(message: MaskMessage): MaskMessage = maskIOHandler(message) {
 
         //@TODO ces requires sont à basculer dans le maskIOHadler

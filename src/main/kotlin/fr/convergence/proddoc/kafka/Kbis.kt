@@ -1,10 +1,9 @@
 package fr.convergence.proddoc.kafka
 
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
-import fr.convergence.proddoc.model.metier.FichierEcrit
+import fr.convergence.proddoc.model.metier.StockageFichier
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
-import fr.convergence.proddoc.util.FichiersUtils
 import fr.convergence.proddoc.util.WSUtils
 import fr.convergence.proddoc.util.maskIOHandler
 import io.vertx.core.logging.Logger
@@ -22,15 +21,13 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
     }
 
     /**
-     * si un MaskMessage arrive sur le topic "kbis" (Incoming) :
-     * 1) récupère le kbis auprès de myGreffe, selon les paramètres transmis dans le MaskMessage reçu
-     * 2) demande le stockage du fichier dans cache
-     * 3) c'est tout : c'est KbisReponse qui écoute si un Kbis est mis en cache pour répondre sur le
-     * topic KBIS_REPONSE
+     * si un MaskMessage arrive sur le topic "KBIS_DEMANDE" (Incoming) :
+     * fait le "passe-plat" et publie un message de demande de stockage de fichier
+     * sur le topic "STOCKER_FICHIER_DEMANDE"
      **/
 
-    @Incoming("kbis")
-    @Outgoing("fichier_info")
+    @Incoming("kbis_demande")
+    @Outgoing("stocker_fichier_demande")
     fun traitementEvenementReceptionKbis(message: MaskMessage) : MaskMessage = maskIOHandler(message) {
 
         //@TODO ces requires sont à basculer dans le maskIOHadler
@@ -41,12 +38,17 @@ class Kbis(@Inject val kbisSrv: KbisReactiveService) {
         val numeroDeGestion = demandeKbis.numeroGestion
         LOG.debug("Réception évènement demande Kbis n° : $numeroDeGestion")
 
-        val kbisPDF = kbisSrv.getPDFbyNumGestion(
-            numeroDeGestion, demandeKbis.avecApostille,
-            demandeKbis.avecSceau, demandeKbis.avecSignature)
+        val avecApostille = demandeKbis.avecApostille
+        val avecSceau = demandeKbis.avecSceau
+        val avecSignature = demandeKbis.avecSignature
+        val mapDeParametres =  mapOf(
+            "numeroGestion" to numeroDeGestion, "apostille" to avecApostille.toString(),
+            "sceau" to avecSceau.toString(), "signature" to avecSignature.toString()
+        )
+        val uriCible = WSUtils.fabriqueURIServiceProdDoc(
+            "/kbis/kbisarecuperer", mapDeParametres)
 
-        val kbisEcrit = FichiersUtils.creeFichierTempBinaire(kbisPDF)
-        FichierEcrit(kbisEcrit.absolutePath, kbisEcrit.name, numeroDeGestion)
+        StockageFichier(numeroDeGestion,uriCible.toASCIIString(),null, mapDeParametres, null)
 
     }
 }

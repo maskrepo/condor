@@ -4,10 +4,12 @@ Lancement : ./gradlew quarkusdev <br>
 
 ## Rôle du service
 Fournir un Kbis :
-1) Traiter une demande de Kbis
-2) Récupérer Kbis auprès du WS myGreffe
-3) Demander le stockage du Kbis dans le cache applicatif
-4) Réponde avec URL du Kbis demandé initialement
+1) Traiter une demande de Kbis (en provenance de Rhino)
+2) faire demande de stockage (auprès de Stinger)
+3) Sur la demande de Stinger, récupérer le Kbis auprès du WS myGreffe
+4) Retourner le fichier à Stinger
+5) traiter la réponse de Stinger 
+5) Répondre (à Rhino) avec URL du Kbis demandé initialement
 
 ## Topics utilisés
 KBIS_DEMANDE<br>

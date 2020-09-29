@@ -60,7 +60,7 @@ dependencies {
     implementation("io.quarkus:quarkus-kafka-client:$quarkusVersion")
     implementation("io.quarkus:quarkus-smallrye-reactive-messaging-kafka:$quarkusVersion")
     implementation("io.quarkus:quarkus-vertx-web")
-    implementation("io.vertx:vertx-web-client:3.9.2")
+    implementation("io.vertx:vertx-web-client")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
 
     implementation("fr.convergence.proddoc.lib:mask-model:$MaskModelVersion")
