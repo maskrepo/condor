@@ -1,10 +1,7 @@
 package fr.convergence.proddoc.services.rest.client
 
 import fr.convergence.proddoc.util.WSUtils
-import io.vertx.core.logging.Logger
-import io.vertx.core.logging.LoggerFactory
-import io.vertx.reactivex.core.streams.ReadStream
-import java.io.BufferedInputStream
+import io.vertx.core.logging.LoggerFactory.getLogger
 import java.io.ByteArrayInputStream
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.core.HttpHeaders
@@ -15,7 +12,7 @@ import javax.ws.rs.core.MediaType
 class KbisReactiveService {
 
     companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(KbisReactiveService::class.java)
+        private val LOG = getLogger(KbisReactiveService::class.java)
     }
 
     /**
@@ -41,7 +38,7 @@ class KbisReactiveService {
         // appel à l'URI : en retour récupération d'une http Response qui doit contenir notre PDF
         return WSUtils.appelleURI(uriCible, 10000) {
             when (it.getHeader(HttpHeaders.CONTENT_TYPE)) {
-                "application/pdf", MediaType.APPLICATION_OCTET_STREAM ->  it.bodyAsBuffer().bytes.inputStream()
+                "application/pdf", MediaType.APPLICATION_OCTET_STREAM -> it.bodyAsBuffer().bytes.inputStream()
                 else -> throw(IllegalStateException("Erreur : le Kbis récupéré n'est pas au format binaire / pdf"))
             }
         }

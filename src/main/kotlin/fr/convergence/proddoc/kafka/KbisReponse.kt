@@ -1,7 +1,7 @@
 package fr.convergence.proddoc.kafka
 
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
-import fr.convergence.proddoc.model.metier.FichierAccessible
+import fr.convergence.proddoc.model.metier.FichierStocke
 import fr.convergence.proddoc.model.metier.KbisRetour
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
@@ -9,26 +9,26 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.eclipse.microprofile.reactive.messaging.Channel
 import org.eclipse.microprofile.reactive.messaging.Emitter
-import org.eclipse.microprofile.reactive.messaging.Incoming
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @ApplicationScoped
-class KbisReponse {
+class KbisReponse(
 
-    companion object {
-        private val LOG: Logger = getLogger(KbisReponse::class.java)
-    }
+) {
 
     @Inject
     @field: Channel("kbis_reponse")
-    val retourEmitter: Emitter<MaskMessage>? = null
+    var retourEmitter: Emitter<MaskMessage>? = null
+
+    companion object {
+        private val LOG = getLogger(KbisReponse::class.java)
+    }
 
     /**
      * traite l'évènement de statut de mise dans le cache du fichier
      * et répond à la demande initiale du Kbis en publiant un message qui contient son URL
      */
-    @Incoming("stocker_fichier_reponse")
     fun traitementEvenementKbisDansCache(messageIn: MaskMessage) {
 
         //@TODO ces requires sont à basculer dans le maskIOHadler
@@ -43,17 +43,22 @@ class KbisReponse {
                 val typeDemande = messageIn.entete.typeDemande
                 val idMessage = messageIn.entete.idUnique
                 if (messageIn.entete.typeDemande == "KBIS") {
-                    val fichierEnCache = messageIn.recupererObjetMetier<FichierAccessible>()
-                    val urlKbis = fichierEnCache.messageRetour
-                    LOG.debug("Réception évènement Kbis stocké : $urlKbis")
-                    messageOut = MaskMessage.reponseOk(KbisRetour(urlKbis).toString(), messageIn)
+                    val fichierEnCache = messageIn.recupererObjetMetier<FichierStocke>()
+                    val urlKbis = fichierEnCache.urlAcces
+                    LOG.debug("Réception évènement Kbis stocké : ${fichierEnCache.urlAccesNavigateur}")
+                    messageOut =
+                        MaskMessage.reponseOk(KbisRetour(urlKbis).toString(), messageIn, messageIn.entete.idReference)
                 } else {
                     // pour l'instant répondre "non traitable par Condor"
                     LOG.warn("Message $idMessage de type $typeDemande non traitable par service Kbis (Condor n'est probablement pas le destinataire)")
-                    messageOut = MaskMessage.reponseOk(KbisRetour("Message $idMessage de type $typeDemande non traitable par service Kbis (Condor)"), messageIn)
+                    messageOut = MaskMessage.reponseOk(
+                        KbisRetour("Message $idMessage de type $typeDemande non traitable par service Kbis (Condor)"),
+                        messageIn,
+                        messageIn.entete.idReference
+                    )
                 }
             } catch (ex: Exception) {
-                messageOut = MaskMessage.reponseKo<Exception>(ex, messageIn)
+                messageOut = MaskMessage.reponseKo<Exception>(ex, messageIn, messageIn.entete.idReference)
             } finally {
                 retour(messageOut)
             }

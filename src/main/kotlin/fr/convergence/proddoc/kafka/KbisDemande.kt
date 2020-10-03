@@ -2,35 +2,30 @@ package fr.convergence.proddoc.kafka
 
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.KbisDemande
-import fr.convergence.proddoc.model.metier.StockageFichier
-import fr.convergence.proddoc.util.WSUtils
+import fr.convergence.proddoc.services.rest.client.KbisReactiveService
+import fr.convergence.proddoc.util.stinger.StingerUtil
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
-import org.eclipse.microprofile.reactive.messaging.Channel
-import org.eclipse.microprofile.reactive.messaging.Emitter
 import org.eclipse.microprofile.reactive.messaging.Incoming
+import java.io.InputStream
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @ApplicationScoped
-class KbisDemande() {
+class KbisDemande(
+    @Inject val stingerUtil: StingerUtil,
+    @Inject val kbisReactiveService: KbisReactiveService,
+    @Inject val kbisReponse: KbisReponse
+) {
 
     companion object {
-        private val LOG: Logger = getLogger(KbisDemande::class.java)
+        private val LOG = getLogger(KbisDemande::class.java)
     }
-
-    @Inject
-    @field: Channel("stocker_fichier_demande")
-    val retourEmitter: Emitter<MaskMessage>? = null
 
     /**
      * si un MaskMessage arrive sur le topic "KBIS_DEMANDE" (Incoming) :
-     * fait le "passe-plat" et publie un message de demande de stockage de fichier
-     * sur le topic "STOCKER_FICHIER_DEMANDE"
+     * fait le "passe-plat" et publie un message de demande de stockage de fichier a Stinger
      **/
-
     @Incoming("kbis_demande")
     fun traiterEvenementDemandeKbis(messageIn: MaskMessage) {
 
@@ -38,36 +33,23 @@ class KbisDemande() {
         requireNotNull(messageIn.entete.typeDemande) { "message.entete.typeDemande est null" }
         requireNotNull(messageIn.objetMetier) { "message.objectMetier est null" }
 
-        var messageOut: MaskMessage = messageIn
-        GlobalScope.launch {
-            try {
-                val demandeKbis = messageIn.recupererObjetMetier<KbisDemande>()
-                val numeroDeGestion = demandeKbis.numeroGestion
-                LOG.debug("Réception évènement demande Kbis n° : $numeroDeGestion")
-
-                val avecApostille = demandeKbis.avecApostille
-                val avecSceau = demandeKbis.avecSceau
-                val avecSignature = demandeKbis.avecSignature
-                val mapDeParametres = mapOf(
-                    "numeroGestion" to numeroDeGestion, "apostille" to avecApostille.toString(),
-                    "sceau" to avecSceau.toString(), "signature" to avecSignature.toString()
-                )
-                val uriCible = WSUtils.fabriqueURIServiceProdDoc(
-                    "/kbis/kbisarecuperer", mapDeParametres)
-                messageOut = MaskMessage.reponseOk(
-                    StockageFichier(numeroDeGestion, uriCible.toASCIIString(), null, mapDeParametres, null), messageIn
-                )
-
-            } catch (ex: Exception) {
-                messageOut = MaskMessage.reponseKo<Exception>(ex, messageIn)
-            } finally {
-                retour(messageOut)
-            }
-        }
+        stingerUtil.stockerResultatSurStinger(
+            messageIn,
+            this::getPDFbyMaskMessage,
+            kbisReponse::traitementEvenementKbisDansCache,
+            "application/pdf",
+            messageIn.recupererObjetMetier<KbisDemande>().numeroGestion
+        )
     }
 
-    private suspend fun retour(message: MaskMessage) {
-        LOG.info("Reponse asynchrone = $message")
-        retourEmitter?.send(message)
+    private fun getPDFbyMaskMessage(maskMessage: MaskMessage): InputStream {
+        return with(maskMessage.recupererObjetMetier<KbisDemande>()) {
+            kbisReactiveService.getPDFbyNumGestion(
+                numeroGestion,
+                avecApostille,
+                avecSceau,
+                avecSignature
+            )
+        }
     }
 }
