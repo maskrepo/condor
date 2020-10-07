@@ -27,10 +27,7 @@ class KbisDemande(
      **/
     @Incoming("kbis_demande")
     fun traiterEvenementDemandeKbis(messageIn: MaskMessage) {
-
-        //@TODO ces requires sont à basculer dans le maskIOHadler
-        requireNotNull(messageIn.entete.typeDemande) { "message.entete.typeDemande est null" }
-        requireNotNull(messageIn.objetMetier) { "message.objectMetier est null" }
+        LOG.info("Réception d'une demande de génération de KBIS : $messageIn")
 
         stingerUtil.stockerResultatSurStinger(
             messageIn,
