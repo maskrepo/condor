@@ -4,7 +4,6 @@ import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
 import fr.convergence.proddoc.util.stinger.StingerUtil
-import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import java.io.InputStream
