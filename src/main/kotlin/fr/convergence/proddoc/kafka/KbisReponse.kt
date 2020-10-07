@@ -3,23 +3,17 @@ package fr.convergence.proddoc.kafka
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.FichierStocke
 import fr.convergence.proddoc.model.metier.KbisRetour
-import io.vertx.core.logging.Logger
-import io.vertx.core.logging.LoggerFactory.getLogger
+import fr.convergence.proddoc.util.MessageUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.eclipse.microprofile.reactive.messaging.Channel
-import org.eclipse.microprofile.reactive.messaging.Emitter
+import org.slf4j.LoggerFactory.getLogger
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @ApplicationScoped
 class KbisReponse(
-
+    @Inject var messageUtils: MessageUtils
 ) {
-
-    @Inject
-    @field: Channel("kbis_reponse")
-    var retourEmitter: Emitter<MaskMessage>? = null
 
     companion object {
         private val LOG = getLogger(KbisReponse::class.java)
@@ -67,6 +61,6 @@ class KbisReponse(
 
     private suspend fun retour(message: MaskMessage) {
         LOG.info("Reponse asynchrone = $message")
-        retourEmitter?.send(message)
+        messageUtils.getEmitter("kbis_reponse").send(message)
     }
 }
