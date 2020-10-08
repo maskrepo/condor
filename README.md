@@ -28,6 +28,7 @@ Sous Confluence : https://zedreamteam.atlassian.net/wiki/spaces/MASK/pages/16416
     "idLot": "12345",
     "dateHeureDemande": "2020-08-25T09:08:07",
     "idEmetteur": "L20057",
+    "idReference": "zerealref123",
     "idGreffe": "0101",
     "typeDemande": "KBIS"
   },
