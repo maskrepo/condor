@@ -20,6 +20,9 @@ jobs:
 
       - name: Determination du numero de version
         run: ./gradlew printVersion
+        
+      - name: Set env
+        run: echo ::set-env name=TAG_VERSION::$(cat version.txt)
 
       - name: Build with Gradle
         run: ./gradlew build
@@ -38,4 +41,4 @@ jobs:
           file: ./src/main/docker/Dockerfile.jvm
           platforms: linux/amd64
           push: true
-          tags: mygreffe/condor-jvm:latest
+          tags: mygreffe/condor-jvm:$TAG_VERSION
