@@ -39,6 +39,4 @@ jobs:
           platforms: linux/amd64
           push: true
           repository: mygreffe/condor
-          tags:
-            ${{ cat version.txt }}
-            mygreffe/condor:latest
+          tags: ${{ cat version.txt }}
