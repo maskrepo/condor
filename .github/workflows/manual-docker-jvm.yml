@@ -38,6 +38,7 @@ jobs:
           file: ./src/main/docker/Dockerfile.jvm
           platforms: linux/amd64
           push: true
+          repository: mygreffe/condor
           tags:
-            mygreffe/condor:"$(cat version.txt)"
+            ${{ cat version.txt }}
             mygreffe/condor:latest
