@@ -1,7 +1,7 @@
 package fr.convergence.proddoc.services.rest.client
 
 import fr.convergence.proddoc.util.WSUtils
-import io.vertx.core.logging.LoggerFactory.getLogger
+import org.slf4j.LoggerFactory.getLogger
 import java.io.InputStream
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.core.MediaType
@@ -34,8 +34,10 @@ class KbisReactiveService {
             )
         )
 
-        // Appel de l'URI
-        return WSUtils.appelleURI(uriCible, 10000, MediaType.APPLICATION_OCTET_STREAM).readEntity(InputStream::class.java)
+        // appel à l'URI : en retour récupération d'une http Response qui doit contenir notre PDF
+        return WSUtils
+            .appelleURI(uriCible, 10000, MediaType.APPLICATION_OCTET_STREAM)
+            .readEntity(InputStream::class.java)
     }
 
 }

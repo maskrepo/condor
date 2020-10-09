@@ -1,20 +1,20 @@
-package fr.convergence.proddoc.reactive
+package fr.convergence.proddoc.kafka
 
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.KbisDemande
 import fr.convergence.proddoc.services.rest.client.KbisReactiveService
 import fr.convergence.proddoc.util.stinger.StingerUtil
-import io.vertx.core.logging.LoggerFactory.getLogger
 import org.eclipse.microprofile.reactive.messaging.Incoming
+import org.slf4j.LoggerFactory.getLogger
 import java.io.InputStream
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @ApplicationScoped
 class KbisDemande(
-    @Inject val stingerUtil: StingerUtil,
-    @Inject val kbisReactiveService: KbisReactiveService,
-    @Inject val kbisReponse: KbisReponse
+    @Inject var stingerUtil: StingerUtil,
+    @Inject var kbisReactiveService: KbisReactiveService,
+    @Inject var kbisReponse: KbisReponse
 ) {
 
     companion object {
@@ -27,10 +27,7 @@ class KbisDemande(
      **/
     @Incoming("kbis_demande")
     fun traiterEvenementDemandeKbis(messageIn: MaskMessage) {
-
-        //@TODO ces requires sont à basculer dans le maskIOHadler
-        requireNotNull(messageIn.entete.typeDemande) { "message.entete.typeDemande est null" }
-        requireNotNull(messageIn.objetMetier) { "message.objectMetier est null" }
+        LOG.info("Réception d'une demande de génération de KBIS : $messageIn")
 
         stingerUtil.stockerResultatSurStinger(
             messageIn,
