@@ -41,4 +41,6 @@ jobs:
           file: ./src/main/docker/Dockerfile.jvm
           platforms: linux/amd64
           push: true
-          tags: mygreffe/condor-jvm:${{ env.TAG_VERSION }}
+          tags: |
+            mygreffe/condor-jvm:${{ env.TAG_VERSION }}
+            mygreffe/condor-jvm:latest
