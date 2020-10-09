@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "fr.convergence.proddoc"
-version = "1.1.0-SNAPSHOT"
+version = "1.1.1-SNAPSHOT"
 
 // je mets ces 2 variables ici car je n'arrive pas à les mettre ailleurs
 // (dans settings.gradle.kts par exemple)
