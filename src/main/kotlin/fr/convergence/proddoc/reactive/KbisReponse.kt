@@ -1,9 +1,8 @@
-package fr.convergence.proddoc.kafka
+package fr.convergence.proddoc.reactive
 
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.model.metier.FichierStocke
 import fr.convergence.proddoc.model.metier.KbisRetour
-import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory.getLogger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
