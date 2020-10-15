@@ -27,25 +27,44 @@ class KbisDemande(
      **/
     @Incoming("kbis_demande")
     fun traiterEvenementDemandeKbis(messageIn: MaskMessage) {
+
         LOG.info("Réception d'une demande de génération de KBIS : $messageIn")
+
+        val objetMetier = messageIn.recupererObjetMetier<KbisDemande>()
+        val numeroGestion = objetMetier.numeroGestion
+        val identifiantRegistre = objetMetier.identifiantRegistre
+        val referenceMetier =
+            { if (numeroGestion == null) identifiantRegistre else numeroGestion }.toString() // louche mais comment faire mieux / bien ?
 
         stingerUtil.stockerResultatSurStinger(
             messageIn,
             this::getPDFbyMaskMessage,
             kbisReponse::traitementEvenementKbisDansCache,
             "application/pdf",
-            messageIn.recupererObjetMetier<KbisDemande>().numeroGestion
+            referenceMetier
         )
     }
 
     private fun getPDFbyMaskMessage(maskMessage: MaskMessage): InputStream {
         return with(maskMessage.recupererObjetMetier<KbisDemande>()) {
-            kbisReactiveService.getPDFbyNumGestion(
-                numeroGestion,
-                avecApostille,
-                avecSceau,
-                avecSignature
-            )
+            if (numeroGestion == null) {
+                requireNotNull(identifiantRegistre) { "identifiantRegistre ET numeroGestion sont tous les deux null !" }
+                kbisReactiveService.getPDFbyIdentifiantRegistre(
+                    identifiantRegistre!!,
+                    avecApostille,
+                    avecSceau,
+                    avecSignature
+                )
+            } else {
+                requireNotNull(numeroGestion) { "identifiantRegistre ET numeroGestion sont tous les deux null !" }
+                kbisReactiveService.getPDFbyNumGestion(
+                    numeroGestion!!,
+                    avecApostille,
+                    avecSceau,
+                    avecSignature
+                )
+            }
         }
     }
+
 }

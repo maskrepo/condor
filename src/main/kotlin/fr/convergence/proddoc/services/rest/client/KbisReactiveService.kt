@@ -15,8 +15,9 @@ class KbisReactiveService {
     }
 
     /**
-     * récupère un kbis PDF auprès de myGreffe
-     * retourne un ByteArrayInputStream ou lève une exception
+     * récupère un kbis PDF auprès de myGreffe qui comprend
+     * la demande avec un numéro de gestion
+     * retourne un InputStream ou lève une exception
      */
     fun getPDFbyNumGestion(
         nogest: String, avecApostille: Boolean = false,
@@ -25,19 +26,37 @@ class KbisReactiveService {
 
         LOG.debug("Kbis demandé : $nogest / apostille=$avecApostille / sceau=$avecSceau / signature=$avecSignature")
 
-        // fabrication de l'URI à appeler
-        val uriCible = WSUtils.fabriqueURI(
-            "/kbis", WSUtils.TypeRetourWS.PDF,
+        // appel à myGreffe avec tous les paramètres qui vont bien
+        return WSUtils.demandeRestURLmyGreffe("/kbis/recupererPdf",
             mapOf(
-                "numeroGestion" to nogest, "apostille" to avecApostille.toString(),
-                "sceau" to avecSceau.toString(), "signature" to avecSignature.toString()
-            )
-        )
-
-        // appel à l'URI : en retour récupération d'une http Response qui doit contenir notre PDF
-        return WSUtils
-            .appelleURI(uriCible, 10000, MediaType.APPLICATION_OCTET_STREAM)
+                "numeroGestion" to nogest, "apostille" to avecApostille,
+                "sceau" to avecSceau, "signature" to avecSignature
+            ),5000,MediaType.APPLICATION_OCTET_STREAM)
             .readEntity(InputStream::class.java)
+
     }
+
+    /**
+     * Récupère un kbis PDF auprès du service myGreffe qui comprend
+     * la demande avec un identifiant regitre
+     * retoure un InpuStream ou lèvre une exception
+     */
+    fun getPDFbyIdentifiantRegistre(
+        identifiantRegistre: Long, avecApostille: Boolean = false,
+        avecSceau: Boolean = false, avecSignature: Boolean = false
+    ): InputStream {
+
+        LOG.debug("Kbis demandé : $identifiantRegistre / apostille=$avecApostille / sceau=$avecSceau / signature=$avecSignature")
+
+        // appel à myGreffe avec tous les paramètres qui vont bien
+        return WSUtils.demandeRestURLmyGreffe("/kbis/recupererPdf",
+            mapOf(
+                "identifiantRegistre" to identifiantRegistre, "apostille" to avecApostille,
+                "sceau" to avecSceau, "signature" to avecSignature
+            ),5000,MediaType.APPLICATION_OCTET_STREAM)
+            .readEntity(InputStream::class.java)
+
+    }
+
 
 }
