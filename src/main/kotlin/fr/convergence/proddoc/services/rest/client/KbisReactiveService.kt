@@ -29,9 +29,11 @@ class KbisReactiveService {
         // appel à myGreffe avec tous les paramètres qui vont bien
         return WSUtils.demandeRestURLmyGreffe("/kbis/recupererPdf",
             mapOf(
-                "numeroGestion" to nogest, "apostille" to avecApostille,
-                "sceau" to avecSceau, "signature" to avecSignature
-            ),5000,MediaType.APPLICATION_OCTET_STREAM)
+                "numeroGestion" to nogest,
+                "apostille" to avecApostille,
+                "sceau" to avecSceau,
+                "signature" to avecSignature
+            ),20000,MediaType.APPLICATION_OCTET_STREAM)
             .readEntity(InputStream::class.java)
 
     }
@@ -51,9 +53,11 @@ class KbisReactiveService {
         // appel à myGreffe avec tous les paramètres qui vont bien
         return WSUtils.demandeRestURLmyGreffe("/kbis/recupererPdf",
             mapOf(
-                "identifiantRegistre" to identifiantRegistre, "apostille" to avecApostille,
-                "sceau" to avecSceau, "signature" to avecSignature
-            ),5000,MediaType.APPLICATION_OCTET_STREAM)
+                "identifiantRegistre" to identifiantRegistre,
+                "apostille" to avecApostille,
+                "sceau" to avecSceau,
+                "signature" to avecSignature
+            ),20000,MediaType.APPLICATION_OCTET_STREAM)
             .readEntity(InputStream::class.java)
 
     }

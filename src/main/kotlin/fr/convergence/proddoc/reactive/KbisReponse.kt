@@ -35,12 +35,12 @@ class KbisReponse {
                 // que s'il s'agit d'un message qui nous est adressé à nous c-a-d typeDemande = KBIS
                 val typeDemande = messageIn.entete.typeDemande
                 val idMessage = messageIn.entete.idUnique
-                if (messageIn.entete.typeDemande == "KBIS") {
+                if (messageIn.entete.typeDemande == "DEMANDE_KBIS") {
                     val fichierEnCache = messageIn.recupererObjetMetier<FichierStocke>()
                     val urlKbis = fichierEnCache.urlAcces
                     LOG.debug("Réception évènement Kbis stocké : ${fichierEnCache.urlAccesNavigateur}")
                     messageOut =
-                        MaskMessage.reponseOk(KbisRetour(urlKbis).toString(), messageIn, messageIn.entete.idReference)
+                        MaskMessage.reponseOk(KbisRetour(urlKbis), messageIn, messageIn.entete.idReference)
                 } else {
                     // pour l'instant répondre "non traitable par Condor"
                     LOG.warn("Message $idMessage de type $typeDemande non traitable par service Kbis (Condor n'est probablement pas le destinataire)")
