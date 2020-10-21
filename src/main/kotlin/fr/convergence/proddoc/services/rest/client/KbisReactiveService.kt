@@ -1,14 +1,15 @@
 package fr.convergence.proddoc.services.rest.client
 
-import fr.convergence.proddoc.util.WSUtils
+import fr.convergence.proddoc.util.MyGreffeUtil
 import org.slf4j.LoggerFactory.getLogger
 import java.io.InputStream
 import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
 import javax.ws.rs.core.MediaType
 
 
 @ApplicationScoped
-class KbisReactiveService {
+class KbisReactiveService(@Inject var myGreffeUtil: MyGreffeUtil) {
 
     companion object {
         private val LOG = getLogger(KbisReactiveService::class.java)
@@ -27,13 +28,15 @@ class KbisReactiveService {
         LOG.debug("Kbis demandé : $nogest / apostille=$avecApostille / sceau=$avecSceau / signature=$avecSignature")
 
         // appel à myGreffe avec tous les paramètres qui vont bien
-        return WSUtils.demandeRestURLmyGreffe("/kbis/recupererPdf",
+        return myGreffeUtil.demandeRestURLmyGreffe(
+            "/kbis/recupererPdf",
             mapOf(
                 "numeroGestion" to nogest,
                 "apostille" to avecApostille,
                 "sceau" to avecSceau,
                 "signature" to avecSignature
-            ),20000,MediaType.APPLICATION_OCTET_STREAM)
+            ), 20000, MediaType.APPLICATION_OCTET_STREAM
+        )
             .readEntity(InputStream::class.java)
 
     }
@@ -51,16 +54,16 @@ class KbisReactiveService {
         LOG.debug("Kbis demandé : $identifiantRegistre / apostille=$avecApostille / sceau=$avecSceau / signature=$avecSignature")
 
         // appel à myGreffe avec tous les paramètres qui vont bien
-        return WSUtils.demandeRestURLmyGreffe("/kbis/recupererPdf",
+        return myGreffeUtil.demandeRestURLmyGreffe(
+            "/kbis/recupererPdf",
             mapOf(
                 "identifiantRegistre" to identifiantRegistre,
                 "apostille" to avecApostille,
                 "sceau" to avecSceau,
                 "signature" to avecSignature
-            ),20000,MediaType.APPLICATION_OCTET_STREAM)
+            ), 20000, MediaType.APPLICATION_OCTET_STREAM
+        )
             .readEntity(InputStream::class.java)
 
     }
-
-
 }
