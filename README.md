@@ -1,5 +1,5 @@
 # Condor (service Kbis)
-Lancement : ./gradlew quarkusdev <br>
+Lancement : ./gradlew quarkusdev <br> 
 (port 8090)
 
 ## Rôle du service
